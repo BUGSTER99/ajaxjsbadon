@@ -9,12 +9,29 @@ $(document).ready(function(){
         })
     }
 
+   
+
     function getEmail() {
         $.ajax({
             url:"./getEmail.php",
             data:"HTML",
             success: function(e){
                $("#emailresult").html(e); 
+            }
+        })
+    }
+
+    function getEmailDetailed() {
+        var id = $("#id_email").val();
+        $.ajax({
+            url:"./getemaildetailed.php",
+            type:"POST",
+            data:{
+                id:id
+            },
+            dataType:"HTML",
+            success: function(e){
+                $("#getEmailDetailed").html(e);
             }
         })
     }
@@ -44,6 +61,41 @@ $(document).ready(function(){
             },
         submitHandler: sendEmailProses 
             });
+    }
+
+    function forwardingEmail() {
+        $("#forward-form").validate({
+            rules:
+        {
+        id_email: {
+        required: true,
+        },
+        email_forward: {
+                required: true,
+                email: true
+                },
+        },
+            messages:
+        {
+            email_forward: "please enter your email address",
+            },
+        submitHandler: forwardingProses 
+            });
+    }
+
+    function forwardingProses() {
+        var data = {
+            email_forwarded:$("#email_forward").val(),
+            id_email:$("#id_email").val()
+        };
+        $.ajax({
+            type:"POST",
+            url:"./forwardproses.php",
+            data:data,
+            success: function(e){
+                setTimeout(' window.location.href = "dashboard.php"; ',1000);
+            }
+        })
     }
 
     function Login() {
@@ -98,12 +150,11 @@ $(document).ready(function(){
         })
     }
 
-        $(".forward-email").click(function() {
-            console.log("A");
-        })
 
-        Login();
-        sendEmail();
+    Login();
+    sendEmail();
+    getEmailDetailed();
+    forwardingEmail();
     setInterval(callResult,1000);
     setInterval(getEmail,1000);
 })
